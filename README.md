@@ -2,9 +2,9 @@
 
 Use a basis of **B**-**sp**lines to solve the (**r**o)**v**ibrational **S**chrödinger **e**quation,
 $$H_{j}(R) \psi_\nu(R) \equiv \left[ -\frac{1}{2  μ}  \frac{d^2}{dR^2} + V(R) + \frac{j(j+1)}{2  μ  R^2} \right] \psi_\nu(R) = E_\nu \psi_\nu(R),$$
-where $R$ is the internuclear distance, $\mu$ is the reduced mass of the molecule, $j$ is the rotatinal quantum number of the molcule, and $\nu$ is the vibrational quantum number of the molecule.
-The potential $V(R)$ can be purely real, or can have a purely imaginary potential added to the tail end, resulting in a complex aborbing potential (CAP).
-Using a purely real potential will result in calculating real-valued bound-state wavefunctions with real energies $E_\nu$, although the output varialbes are actually complex.
+where $R$ is the internuclear distance, $\mu$ is the reduced mass of the molecule, $j$ is the rotational quantum number of the molecule, and $\nu$ is the vibrational quantum number of the molecule.
+The potential $V(R)$ can be purely real, or can have a purely imaginary potential added to the tail end, resulting in a complex absorbing potential (CAP).
+Using a purely real potential will result in calculating real-valued bound-state wavefunctions with real energies $E_\nu$, although the output variables are actually complex.
 Using a CAP, the wavefunctions and energies become complex (the Hamiltonian is no longer Hermitian, so the eigenenergies no longer have to be real), although the complex part of $E_\nu$ for bound states should be negligible.
 The available imaginary potentials are as follows :
 
@@ -41,7 +41,7 @@ In the package directory, just run the compile script
 
     $ ./compile
 
-The archive file `libbsprvse.a` will be placed in the `lib` subdirectory and is necessary to link agains when compiling another
+The archive file `libbsprvse.a` will be placed in the `lib` subdirectory and is necessary to link against when compiling another
 program that uses this library. The `bsprvse` executable will be placed in the `bin` subdirectory.
 
 ## Testing
@@ -159,7 +159,7 @@ The input variables are as follows :
 | ---------------- | ----------------------------- | ----------------------------------------------- |
 | R_vals(:)        | real(dp), intent(in)          | Array containing the values of the internuclear distance in atomic units|
 | V_vals(:)        | real(dp), intent(in)          | Array containing the values of the intermolecular potential in atomic units|
-| j                | integer, intent(in)           |  The value $j$ in the Schödinger equation|
+| j                | integer, intent(in)           |  The value $j$ in the Schrödinger equation|
 | reduced_mass     | real(dp), intent(in)          | The system's reduced mass in atomic units (electron mass = 1; not atomic mass units)|
 | nwf              | integer, intent(in)           | The number of wavefunctions to calculate|
 | nR_wf            | integer, intent(in)           |  The number of $R$-grid points on which to evaluate the wavefunctions|
