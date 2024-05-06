@@ -1,0 +1,9 @@
+data
+output
+a.out
+bin
+lib
+mod
+obj
+input/*
+!input/TEMPLATE.namelist

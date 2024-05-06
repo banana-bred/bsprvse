@@ -1,0 +1,79 @@
+_____________________________________________________________________________________________
+
+  $$$$$$$$    $$$$$$$$$$   $$$$$$$$   $$$$$$$    $$$           $$$  $$$$$$$$$$  $$$$$$$$$$$
+  $$      $   $$       $   $$      $  $$     $     $$         $$    $$       $  $$
+  $$      $   $$           $$      $  $$     $      $$       $$     $$          $$
+  $$$$$$$$    $$$$$$$$$$   $$$$$$$$   $$$$$$$        $$     $$      $$$$$$$$$$  $$$$$$$$
+  $$      $           $$   $$         $$    $$        $$   $$               $$  $$
+  $$      $   $       $$   $$         $$     $$        $$ $$        $       $$  $$
+  $$$$$$$$    $$$$$$$$$$   $$         $$      $$        $$$         $$$$$$$$$$  $$$$$$$$$$$
+_____________________________________________________________________________________________
+
+Using a B-SPlines basis, solve the (Ro)Vibrational Schrödinger Equation
+
+=============================================================================================
+
+-- This file contains a Fortran namelist, named input_parameters. A Fortran Namelist is
+essentially a group of variables that fall under one group name. Such a file is supplied to
+the Fortran program via stdin redirection (<), i.e. the program reads stdin and expects the
+contents of a namelist file. The namelist is terminated by "/".
+
+! =============================================================================================
+$input_parameters
+! =============================================================================================
+
+  j = 0
+    !! The rotational quantum number $j$
+
+  nwf = 75
+    !! The number of wavefunctions to calculate, from ν = 0 to ν = nwf - 1
+  nR_wf = 1000
+    !! The number of $R$-values for the wavefunctions
+  reduced_mass = 7.3545994295895865
+    !! The reduced mass of the molecule, in atomic mass units, i.e., the mass of
+    !! carbon-12 is 12 atomic mass units.
+
+  np = 400
+    !! The number of B-spline intervals
+  order = 5
+    !! The order of the B-splines
+  legpoints = 10
+    !! The number of Gauss-Legendre quadrature points used to calcuate integrals
+
+  R_max = 10.0
+    !! The largest value to consider for the internuclear potential
+
+  CAP_exists  = .true.
+    !! Use a comlex absorbing potential (CAP) ?
+    !! yes -> CAP_exists = .true.
+    !! no  -> CAP_exists = .false.
+  CAP_type = 0
+    !! The CAP type:
+    !!   0: exponential
+    !!   1: linear
+    !!   2: quadratic
+    !!   3: cubic
+    !!   4: quartic
+  CAP_length = 4.0
+    !! The length of the CAP, in atomic units. The CAP starts at R_max - CAP_length and
+    !! continues to R_max, where it takes its maximal value. R_max is the
+    !! largest value at which the internuclear potential was calcualted
+  CAP_strength = 0.01
+    !! The CAP_strength $A$, in atomic units.
+
+  potential_file = "sampleData/CFp_pot_30.dat"
+    !! The location for the input internuclear potential in the format
+    !!   R1 V1
+    !!   R2 V2
+    !!   R3 V3
+    !!    .  .
+    !!    .  .
+    !!    .  .
+    !!
+    !! where R and V are both in atomic units
+
+  output_directory = "output"
+    !! The directory in which to write the wavefunctions and energies.
+    !! This directory must already exist
+
+/

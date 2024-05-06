@@ -1,0 +1,21 @@
+#!/bin/sh
+
+rm -f mod/*
+rm -f obj/*
+
+mkdir -p mod
+mkdir -p obj
+mkdir -p lib
+mkdir -p bin
+
+for item in bsprvse__constants.f bsprvse__auxiliary_routines.f bsprvse__globals.f bsprvse__utilities.f bsprvse__gaussian_weights.f bsprvse__routines.f bsprvse.f ; do
+
+  gfortran -O3 -J mod -ffree-form -c src/"${item}" -o obj/"${item%.*}".o
+
+done
+
+ar r lib/libbsprvse.a obj/*.o mod/*.*mod
+
+gfortran -O3 -I mod -ffree-form -c main/main.f -o obj/main.o
+
+gfortran -I mod -l lapack obj/*.o -o bin/bsprvse
