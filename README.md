@@ -129,10 +129,10 @@ To use this project within your [fpm](https://github.com/fortran-lang/fpm) proje
     [dependencies]
     bsprvse = { git = "https://github.com/banana-bred/bsprvse" }
 
-or
+<!-- or -->
 
-    [dependencies]
-    bsprvse = {"namespace" = "..."}
+<!--     [dependencies] -->
+<!--     bsprvse = {"namespace" = "..."} -->
 
 The module `bsprvse` contains the public interface `solve_RVSE()` :
 
