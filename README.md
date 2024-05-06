@@ -41,7 +41,7 @@ In the package directory, just run the compile script
 
     $ ./compile
 
-The archive file `libbsprvse.a` will be placed in the `lib` subdirectory and is necessar to link agains when compiling another
+The archive file `libbsprvse.a` will be placed in the `lib` subdirectory and is necessary to link agains when compiling another
 program that uses this library. The `bsprvse` executable will be placed in the `bin` subdirectory.
 
 ## Testing
