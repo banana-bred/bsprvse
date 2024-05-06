@@ -59,7 +59,8 @@ and with [fpm](https://github.com/fortran-lang/fpm),
 
     $ fpm run < input/TEMPLATE.namelist
 
-The input parameters, defined in the `$input_parameters` namelist, are the following :
+The input parameters are defined in the `$input_parameters` namelist, which can be found in the main program at `main/main.f`.
+An example input is provided in `input/TEMPLATE.namelist`, :
 
 ```
 $input_parameters
