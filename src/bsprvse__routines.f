@@ -48,7 +48,7 @@ contains
     !! of the internuclear distance $R$. A complex absorbing potential (CAP) can be added to calculate
     !! bound continuum states
 
-    use bsprvse__constants, only: ci
+    use bsprvse__constants, only: zero, ci
     use bsprvse__utilities, only: die
     use bsprvse__globals,   only: R_mod, V_mod, x_grid, x_weights, x_sectors, B_overlap, H_matrix, basis, bound_energies, &
                                   basis_dimension, legpoints, mass, np, nR_mod, order, V_min, x_begin, x_end
@@ -140,20 +140,21 @@ contains
 
     E_for_K(1:nWF) = Bound_energies(1:nWF)
 
-    block
-      use bsprvse__constants, only: au2ev, ryd
-      complex(wp) :: B_complex
-      do i = 1, nWF
-        call wf_R_calc(nR_wf, R_wf, i, wf_g(:, i), B_complex)
-        B_rot(i) = abs(B_complex)
-      enddo
-    end block
+    ! -- calculate the wavefunction ψ_ν(R) for each ν
+    do i = 1, nWF
 
+      call wf_R_calc(nR_wf, R_wf, i, wf_g(:, i), B_rot(i))
 
-    ! call Plot_basis2(np,legpoints,order,x_grid,basis)
+      if(i .eq. 1) cycle
 
-    ! -- allocatable arrays dellcoate automatically when they go out of scope
-    ! deallocate(x_grid,x_weights,x_sectors,basis,B_overlap,H_matrix,psi,R_mod, V_mod,Bound_energies)
+      ! -- rotational constants should decrease monotonically with increasing vibratinal
+      !    quantum number ν. However, calculating rotational constants for quasi-continuum
+      !    states doesn't really make sense. The moment of inertia for such states should
+      !    be infinite, which implies B = 0, so we set all B_rot = 0 past the first B_rot
+      !    that increases with increasing ν.
+      if(B_rot(i) > B_rot(i -1)) B_rot(i) = zero
+
+    enddo
 
   end subroutine bound_states_and_resonances
 
@@ -265,11 +266,11 @@ contains
     use bsprvse__globals,   only: psi, np, order, x_sectors, basis_dimension, mass
     use bsprvse__constants, only: zero, ci
 
-    integer, intent(in) :: N_g
-    integer, intent(in) :: N_wf
-    real(wp), intent(in) :: R_g(N_g)
+    integer,     intent(in)  :: N_g
+    integer,     intent(in)  :: N_wf
+    real(wp),    intent(in)  :: R_g(N_g)
     complex(wp), intent(out) :: wf_g(N_g)
-    complex(wp), intent(out) :: bv
+    real(wp),    intent(out) :: bv
 
     integer :: i
     ! real(wp) :: bcoef(basis_dimension)
@@ -289,12 +290,8 @@ contains
       wf_g(i) = cmplx(wf_r(i), wf_c(i), kind = wp)
     enddo
 
-    ! -- calculate the rotational constant: B = < ψ_ν(R) | 1 / (2μR^2) | ψ_ν(R) >
-    bv = integral_trapezoid(R_g, wf_g * wf_g / ( 2 * mass * R_g * R_g ))
-    ! bv = abs(integral_trapezoid(R_g, wf_g * wf_g / ( 2 * mass * R_g * R_g )))
-    ! print*, bv
-    ! bv = integral_trapezoid(R_g, conjg(wf_g) * wf_g / ( 2 * mass * R_g * R_g ))
-    ! print*, bv
+    ! -- Calculate the rotational constant: B = < ψ_ν(R) | 1 / (2μR^2) | ψ_ν(R) >
+    bv = real( integral_trapezoid(R_g, conjg(wf_g) * wf_g / ( 2 * mass * R_g * R_g )) , kind = wp )
 
   end subroutine wf_R_calc
 
