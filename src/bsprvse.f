@@ -29,7 +29,8 @@ contains
 ! ================================================================================================================================ !
 
   ! ------------------------------------------------------------------------------------------------------------------------------ !
-  module subroutine solve_RVSE_without_CAP(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, np, legpoints, order)
+  module subroutine solve_RVSE_without_CAP(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, B_rot &
+                                          , np, legpoints, order)
     !! Wrapper routine to `solve_RVSE_with_CAP` for solving the RVSE without an aborbing potential.
     !! This just sets the `CAP_exists` variable to `.false.` without requiring the CAP variables as input
     !! from the user.
@@ -55,6 +56,8 @@ contains
       !! internuclear distances and iv runs over the vibrational quantum number ν
     complex(wp), intent(out) :: wf_nrg(:)
       !! The energies of the wavefunctions (in atomic units)
+    real(wp), intent(out) :: B_rot(:)
+      !! The rotational constant for each vibrational state in atomic units
     integer, intent(in) :: np
       !! The number of B-spline intervals
     integer, intent(in) :: legpoints
@@ -67,15 +70,14 @@ contains
     real(wp), parameter :: CAP_length   = zero
     real(wp), parameter :: CAP_strength = zero
 
-    call solve_RVSE_with_CAP(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, np, legpoints, order, &
-      CAP_exists, CAP_length, CAP_type, CAP_strength)
+    call solve_RVSE_with_CAP(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, B_rot, np, legpoints, order &
+                            , CAP_exists, CAP_length, CAP_type, CAP_strength)
 
   end subroutine solve_RVSE_without_CAP
 
   ! ------------------------------------------------------------------------------------------------------------------------------ !
-  module subroutine solve_RVSE_with_CAP(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, &
-                                  np, legpoints, order, CAP_exists, CAP_length, CAP_type, CAP_strength &
-    )
+  module subroutine solve_RVSE_with_CAP(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, B_rot  &
+                                       , np, legpoints, order, CAP_exists, CAP_length, CAP_type, CAP_strength )
     !! Solve the (ro)vibrational time-independent Schrödinger equation with an added
     !! imaginary potential on the tail end.
 
@@ -102,6 +104,8 @@ contains
       !! internuclear distances and iv runs over the vibrational quantum number ν
     complex(wp), intent(out) :: wf_nrg(:)
       !! The energies of the wavefunctions (in atomic units)
+    real(wp), intent(out) :: B_rot(:)
+      !! The rotational constant for each vibrational state in atomic units
     integer, intent(in) :: np
       !! The number of B-spline intervals
     integer, intent(in) :: legpoints
@@ -158,29 +162,8 @@ contains
     V_vals2 = V_vals + (j * (j + one)) / (two * massa * R_vals ** 2)
 
     ! -- calculating bound states and resonances
-    call bound_states_and_resonances(R_vals, V_vals2, nWF, nR_wf, R_wf, wf, wf_nrg, np, legpoints, order, massa, &
-                                     CAP_exists, CAP_length, CAP_type, CAP_strength &
-    )
-
-    ! call Siegert_states(nR_in, R_vals(1:nR_in), V_vals2(1:nR_in), nwf, nR_wf, R_wf, wf_g, E_for_K)
-
-    ! wf_nrg = E_for_K
-
-    ! open(newunit = funit, file='energies.dat')
-    ! wf_nrg = E_for_K
-    ! do i = 1, nwf
-    !   wf_nrg
-    !   write(funit, '(10e20.12)') E_for_K(i) % re, E_for_K(i) % im
-    ! enddo
-    ! close(funit)
-
-    ! open(newunit = funit, file='wf.dat')
-    ! do i = 1, nR_wf
-    !   write(funit, '(1000e20.12)') R_wf(i), wf_g(i, 1:nwf)
-    ! enddo
-    ! close(funit)
-
-    ! deallocate(R_wf,wf_g,E_for_K)
+    call bound_states_and_resonances(R_vals, V_vals2, nWF, nR_wf, R_wf, wf, wf_nrg, np, legpoints, order, massa, B_rot &
+                                    , CAP_exists, CAP_length, CAP_type, CAP_strength )
 
   end subroutine solve_RVSE_with_CAP
 

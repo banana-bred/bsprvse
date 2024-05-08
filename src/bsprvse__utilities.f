@@ -6,6 +6,7 @@ module bsprvse__utilities
   private
 
   public :: i2char
+  public :: ndigits
   public :: die
   public :: swapvals
   public :: swapcols

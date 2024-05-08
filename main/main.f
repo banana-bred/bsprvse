@@ -12,8 +12,8 @@ program main
   use iso_fortran_env, only: wp => real64, stdin => input_unit, iostat_end, stdout => output_unit
 
   use bsprvse, only: solve_RVSE
-  use bsprvse__constants, only: au2ev, au2amu, one
-  use bsprvse__utilities, only: die, append, i2char
+  use bsprvse__constants, only: au2ev, au2amu, one, ryd
+  use bsprvse__utilities, only: die, append, i2char, ndigits
 
   implicit none
 
@@ -69,6 +69,8 @@ program main
     !! largest value at which the internuclear potential was calcualted
   real(wp) :: CAP_strength
     !! The CAP_strength $A$, in atomic units.
+  real(wp), allocatable :: B_rot(:)
+    !! The rotational constant for each vibrational state in atomic units
   character(:), allocatable :: potential_file
     !! The location for the input internuclear potential in the format
     !!   R1 V1
@@ -129,13 +131,14 @@ program main
 
   allocate(wf_nrg(nwf))
   allocate(wf(nR_wf, nwf))
+  allocate(B_rot(nwf))
 
   ! -- the grid points on which wavefunctions should be computed
   dR = (R_vals(size(R_vals, 1)) - R_vals(1)) / (nR_wf - one)
   R_wf = [( R_vals(1) + (iR - one) * dR, iR = 1, nR_wf )]
 
   ! -- call the procedure to solve the 1D RVSE with or without a CAP
-  call solve_RVSE(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, np, legpoints, order, &
+  call solve_RVSE(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, B_rot, np, legpoints, order, &
     CAP_exists, CAP_length, CAP_type, CAP_strength)
 
   ! -- example of calling the procedure without supplying the CAP variables for a bound-state calculation
@@ -153,11 +156,19 @@ program main
     close(funit)
   enddo
 
-  ! -- write the output energies
+  ! -- write the output energies and rotational constants
   filename =  output_directory // "/energies.dat"
   open(newunit = funit, file = filename)
   do iv = 0, nwf - 1
-    write(funit, '(A, 2e30.20, " i")') "Energy for ν = " // i2char(iv) // " (eV) :", wf_nrg(iv + 1) * au2ev
+    write(funit, '(A, I' // i2char(ndigits(nwf - 1)) // ', A, 2(e0.0,X), "i")') "Energy for ν = ", iv, " (eV) : " &
+      , wf_nrg(iv + 1) * au2ev
+  enddo
+  close(funit)
+  filename =  output_directory // "/rotational.constants.dat"
+  open(newunit = funit, file = filename)
+  do iv = 0, nwf - 1
+    write(funit, '(A, I' // i2char(ndigits(nwf - 1)) // ', A, e0.0)') "Rotational constant B for ν = ", iv, " (invcm) : "  &
+      , B_rot(iv + 1) * ryd
   enddo
   close(funit)
 

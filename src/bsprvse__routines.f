@@ -41,9 +41,9 @@ contains
 ! ================================================================================================================================ !
 
   ! ------------------------------------------------------------------------------------------------------------------------------ !
-  subroutine bound_states_and_resonances(R_in, V_in, nWF, nR_wf, R_wf, wf_g, E_for_K, &
-                                         np_in, legpoints_in, order_in, mass_in, &
-                                         CAP_exists, CAP_length, CAP_type, CAP_strength)
+  subroutine bound_states_and_resonances(R_in, V_in, nWF, nR_wf, R_wf, wf_g, E_for_K    &
+                                        , np_in, legpoints_in, order_in, mass_in, B_rot &
+                                        , CAP_exists, CAP_length, CAP_type, CAP_strength)
     !! The driving routine to calculate wavefunctions given an internuclear potential as a function
     !! of the internuclear distance $R$. A complex absorbing potential (CAP) can be added to calculate
     !! bound continuum states
@@ -77,6 +77,8 @@ contains
       !! The order of the B-splines
     real(wp), intent(in) :: mass_in
       !! the reduced mass μ of the system in atomic units (not atomic mass unit)
+    real(wp), intent(out) :: B_rot(nWF)
+      !! The rotational constant for each vibrational state in atomic units
     logical, intent(in) :: CAP_exists
       !! Add an imaginary potential to the real internuclear potential ?
       !!   .true.  -> yes
@@ -138,9 +140,15 @@ contains
 
     E_for_K(1:nWF) = Bound_energies(1:nWF)
 
-    do i = 1, nWF
-      call wf_R_calc(nR_wf, R_wf, i, wf_g(:, i))
-    enddo
+    block
+      use bsprvse__constants, only: au2ev, ryd
+      complex(wp) :: B_complex
+      do i = 1, nWF
+        call wf_R_calc(nR_wf, R_wf, i, wf_g(:, i), B_complex)
+        B_rot(i) = abs(B_complex)
+      enddo
+    end block
+
 
     ! call Plot_basis2(np,legpoints,order,x_grid,basis)
 
@@ -252,15 +260,16 @@ contains
   end subroutine sort_E2
 
   ! ------------------------------------------------------------------------------------------------------------------------------ !
-  subroutine wf_R_calc(N_g, R_g, N_wf, wf_g)
+  subroutine wf_R_calc(N_g, R_g, N_wf, wf_g, bv)
 
-    use bsprvse__globals,   only: psi, np, order, x_sectors, basis_dimension
+    use bsprvse__globals,   only: psi, np, order, x_sectors, basis_dimension, mass
     use bsprvse__constants, only: zero, ci
 
     integer, intent(in) :: N_g
     integer, intent(in) :: N_wf
     real(wp), intent(in) :: R_g(N_g)
     complex(wp), intent(out) :: wf_g(N_g)
+    complex(wp), intent(out) :: bv
 
     integer :: i
     ! real(wp) :: bcoef(basis_dimension)
@@ -280,19 +289,12 @@ contains
       wf_g(i) = cmplx(wf_r(i), wf_c(i), kind = wp)
     enddo
 
-    ! bcoef(1) = zero
-    ! bcoef(2:basis_dimension) = psi(1:basis_dimension - 1, N_wf) % re
-
-    ! do i = 1, N_g
-    !   wf_g(i) = B_Spline_to_R(order, np + 1, R_g(i), x_sectors, bcoef)
-    ! enddo
-
-    ! bcoef(1) = zero
-    ! bcoef(2:basis_dimension) = psi(1:basis_dimension - 1, N_wf) % im
-
-    ! do i=1,N_g
-    !   wf_g(i) = wf_g(i) + ci * B_Spline_to_R(order, np + 1, R_g(i), x_sectors, bcoef)
-    ! enddo
+    ! -- calculate the rotational constant: B = < ψ_ν(R) | 1 / (2μR^2) | ψ_ν(R) >
+    bv = integral_trapezoid(R_g, wf_g * wf_g / ( 2 * mass * R_g * R_g ))
+    ! bv = abs(integral_trapezoid(R_g, wf_g * wf_g / ( 2 * mass * R_g * R_g )))
+    ! print*, bv
+    ! bv = integral_trapezoid(R_g, conjg(wf_g) * wf_g / ( 2 * mass * R_g * R_g ))
+    ! print*, bv
 
   end subroutine wf_R_calc
 
@@ -769,6 +771,17 @@ contains
     if (xt(left) .lt. xt(lxt))        return
                                       go to 111
   end subroutine interv
+
+  ! ------------------------------------------------------------------------------------------------------------------------------ !
+  pure function integral_trapezoid(x, y) result(r)
+    use bsprvse__constants, only: two
+    real(wp), intent(in) :: x(:)
+    complex(wp), intent(in) :: y(size(x, 1))
+    complex(wp) :: r
+    integer :: n
+    n = size(x, 1)
+    r = sum( (y(2 : n) + y(1 : n - 1)) * (x(2 : n) - x(1 : n - 1)) ) / two
+  end function integral_trapezoid
 
 ! ================================================================================================================================ !
 end module bsprvse__routines
