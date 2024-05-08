@@ -53,7 +53,7 @@ program main
   integer :: nwf
     !! The number of wavefunctions to calculate, from ν = 0 to ν = nwf - 1
   integer :: legpoints
-    !! The number of Gauss-Legendre quadrature points used to calcuate integrals
+    !! The number of Gauss-Legendre quadrature points used to calculate integrals
   integer :: order
     !! The order of the B-splines
   integer :: nR_wf
@@ -66,7 +66,7 @@ program main
   real(wp) :: CAP_length
     !! The length of the CAP, in atomic units. The CAP starts at R_max - CAP_length and
     !! continues to R_max, where it takes its maximal value. R_max is the
-    !! largest value at which the internuclear potential was calcualted
+    !! largest value at which the internuclear potential was calculated
   real(wp) :: CAP_strength
     !! The CAP_strength $A$, in atomic units.
   real(wp), allocatable :: B_rot(:)

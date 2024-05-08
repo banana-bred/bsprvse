@@ -81,7 +81,7 @@ np = 400
 order = 5
   !! The order of the B-splines
 legpoints = 10
-  !! The number of Gauss-Legendre quadrature points used to calcuate integrals
+  !! The number of Gauss-Legendre quadrature points used to calculate integrals
 
 R_max = 10.0
   !! The largest value to consider for the internuclear potential
