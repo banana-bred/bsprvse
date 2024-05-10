@@ -147,12 +147,12 @@ contains
 
       if(i .eq. 1) cycle
 
-      ! -- rotational constants should decrease monotonically with increasing vibratinal
-      !    quantum number ν. However, calculating rotational constants for quasi-continuum
-      !    states doesn't really make sense. The moment of inertia for such states should
-      !    be infinite, which implies B = 0, so we set all B_rot = 0 past the first B_rot
-      !    that increases with increasing ν.
-      if(B_rot(i) > B_rot(i -1)) B_rot(i) = zero
+      ! ! -- rotational constants should decrease monotonically with increasing vibratinal
+      ! !    quantum number ν. However, calculating rotational constants for quasi-continuum
+      ! !    states doesn't really make sense. The moment of inertia for such states should
+      ! !    be infinite, which implies B = 0, so we set all B_rot = 0 past the first B_rot
+      ! !    that increases with increasing ν.
+      ! if(B_rot(i) > B_rot(i -1)) B_rot(i) = zero
 
     enddo
 

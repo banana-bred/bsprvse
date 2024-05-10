@@ -160,14 +160,14 @@ program main
   filename =  output_directory // "/energies.dat"
   open(newunit = funit, file = filename)
   do iv = 0, nwf - 1
-    write(funit, '(A, I' // i2char(ndigits(nwf - 1)) // ', A, 2(e0.0,X), "i")') "Energy for ν = ", iv, " (eV) : " &
+    write(funit, '(A, I' // i2char(ndigits(nwf - 1)) // ', A, 2(e30.20,X), "i")') "Energy for ν = ", iv, " (eV) : " &
       , wf_nrg(iv + 1) * au2ev
   enddo
   close(funit)
   filename =  output_directory // "/rotational.constants.dat"
   open(newunit = funit, file = filename)
   do iv = 0, nwf - 1
-    write(funit, '(A, I' // i2char(ndigits(nwf - 1)) // ', A, e0.0)') "Rotational constant B for ν = ", iv, " (invcm) : "  &
+    write(funit, '(A, I' // i2char(ndigits(nwf - 1)) // ', A, e30.20)') "Rotational constant B for ν = ", iv, " (invcm) : "  &
       , B_rot(iv + 1) * ryd
   enddo
   close(funit)
