@@ -145,7 +145,7 @@ contains
 
       call wf_R_calc(nR_wf, R_wf, i, wf_g(:, i), B_rot(i))
 
-      if(i .eq. 1) cycle
+      ! if(i .eq. 1) cycle
 
       ! ! -- rotational constants should decrease monotonically with increasing vibratinal
       ! !    quantum number ν. However, calculating rotational constants for quasi-continuum
@@ -290,8 +290,14 @@ contains
       wf_g(i) = cmplx(wf_r(i), wf_c(i), kind = wp)
     enddo
 
-    ! -- Calculate the rotational constant: B = < ψ_ν(R) | 1 / (2μR^2) | ψ_ν(R) >
-    bv = integral_trapezoid(R_g, conjg(wf_g) * wf_g / ( 2 * mass * R_g * R_g ))
+    ! -- Calculate the rotational constant: B = < ψ_ν(R) | 1 / (2μR^2) | ψ_ν(R) >, where the bra is not
+    !    conjugated. For a purely real potential, these wavefunctions will be real anyway. With an
+    !    added imaginary potential, the normalization requires that the bra not be conjugated.
+    !    The rotational constants will be complex. The vibrational energies with a CAP are in general complex,
+    !    so complex rotational constants will just add further complex energy corrections if rotation is added
+    !    later on with, e.g., the rigid rotor approximation.
+    bv = integral_trapezoid(R_g, wf_g * wf_g / ( 2 * mass * R_g * R_g ))
+    ! bv = integral_trapezoid(R_g, conjg(wf_g) * wf_g / ( 2 * mass * R_g * R_g ))
 
   end subroutine wf_R_calc
 
