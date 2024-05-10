@@ -69,7 +69,7 @@ program main
     !! largest value at which the internuclear potential was calculated
   real(wp) :: CAP_strength
     !! The CAP_strength $A$, in atomic units.
-  real(wp), allocatable :: B_rot(:)
+  complex(wp), allocatable :: B_rot(:)
     !! The rotational constant for each vibrational state in atomic units
   character(:), allocatable :: potential_file
     !! The location for the input internuclear potential in the format
@@ -167,8 +167,8 @@ program main
   filename =  output_directory // "/rotational.constants.dat"
   open(newunit = funit, file = filename)
   do iv = 0, nwf - 1
-    write(funit, '(A, I' // i2char(ndigits(nwf - 1)) // ', A, e30.20)') "Rotational constant B for ν = ", iv, " (invcm) : "  &
-      , B_rot(iv + 1) * ryd
+    write(funit, '(A, I' // i2char(ndigits(nwf - 1)) // ', A, 2(e30.20,X), "i")') "Rotational constant B for ν = ", &
+      iv, " (invcm) : ", B_rot(iv + 1) * ryd
   enddo
   close(funit)
 

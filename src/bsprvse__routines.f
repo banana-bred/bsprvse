@@ -77,7 +77,7 @@ contains
       !! The order of the B-splines
     real(wp), intent(in) :: mass_in
       !! the reduced mass μ of the system in atomic units (not atomic mass unit)
-    real(wp), intent(out) :: B_rot(nWF)
+    complex(wp), intent(out) :: B_rot(nWF)
       !! The rotational constant for each vibrational state in atomic units
     logical, intent(in) :: CAP_exists
       !! Add an imaginary potential to the real internuclear potential ?
@@ -270,7 +270,7 @@ contains
     integer,     intent(in)  :: N_wf
     real(wp),    intent(in)  :: R_g(N_g)
     complex(wp), intent(out) :: wf_g(N_g)
-    real(wp),    intent(out) :: bv
+    complex(wp),    intent(out) :: bv
 
     integer :: i
     ! real(wp) :: bcoef(basis_dimension)
@@ -291,7 +291,7 @@ contains
     enddo
 
     ! -- Calculate the rotational constant: B = < ψ_ν(R) | 1 / (2μR^2) | ψ_ν(R) >
-    bv = real( integral_trapezoid(R_g, conjg(wf_g) * wf_g / ( 2 * mass * R_g * R_g )) , kind = wp )
+    bv = integral_trapezoid(R_g, conjg(wf_g) * wf_g / ( 2 * mass * R_g * R_g ))
 
   end subroutine wf_R_calc
 

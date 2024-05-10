@@ -56,7 +56,7 @@ contains
       !! internuclear distances and iv runs over the vibrational quantum number ν
     complex(wp), intent(out) :: wf_nrg(:)
       !! The energies of the wavefunctions (in atomic units)
-    real(wp), intent(out) :: B_rot(:)
+    complex(wp), intent(out) :: B_rot(:)
       !! The rotational constant for each vibrational state in atomic units
     integer, intent(in) :: np
       !! The number of B-spline intervals
@@ -104,7 +104,7 @@ contains
       !! internuclear distances and iv runs over the vibrational quantum number ν
     complex(wp), intent(out) :: wf_nrg(:)
       !! The energies of the wavefunctions (in atomic units)
-    real(wp), intent(out) :: B_rot(:)
+    complex(wp), intent(out) :: B_rot(:)
       !! The rotational constant for each vibrational state in atomic units
     integer, intent(in) :: np
       !! The number of B-spline intervals

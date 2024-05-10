@@ -168,7 +168,7 @@ The input variables are as follows :
 | wf(:,:)          | complex(dp), intent(out)      |  Array containing the values of the wavefunctions indexed as `(iR, iv)`, where `iR` runs over the|
 |                  |                               |  internuclear distances and iv runs over the vibrational quantum number ν|
 | wf_nrg(:)        | complex(dp), intent(out)      | The energies of the wavefunctions (in atomic units)|
-| B_rot(:)         | real(dp), intent(out)         | The rotational constant for each vibrational state in atomic units|
+| B_rot(:)         | complex(dp), intent(out)      | The rotational constant for each vibrational state in atomic units|
 | np               | integer, intent(in)           | The number of B-spline intervals|
 | legpoints        | integer, intent(in)           | The number of Gauss-Legendre quadrature points used to calculate integrals|
 | order            | integer, intent(in)           | The order of the B-splines|
