@@ -160,6 +160,25 @@ contains
 
     enddo
 
+    ! -- deallocate arrays in case this routine is called again during the same program execution
+    deallocation: block
+      use bsprvse__globals, only: R_mod, V_mod, xwlegall, basis, x_grid, x_weights, x_sectors, B_overlap, psi, H_matrix &
+                                , bound_energies
+      deallocate(R_mod)
+      deallocate(V_mod)
+      deallocate(xwLegAll)
+      deallocate(basis)
+      deallocate(x_grid)
+      deallocate(x_weights)
+      deallocate(x_sectors)
+      deallocate(B_overlap)
+      deallocate(Psi)
+      deallocate(H_matrix)
+      deallocate(Bound_energies)
+    end block deallocation
+
+    call interv_reset
+
   end subroutine bound_states_and_resonances
 
   ! ------------------------------------------------------------------------------------------------------------------------------ !
@@ -720,9 +739,7 @@ contains
     integer :: istep
     integer :: middle
     integer :: ilo = 1
-    ! integer :: ilo
-    ! data ilo /1/
-    save ilo
+    print*, "ilo", ilo
     ihi = ilo + 1
     if (ihi .lt. lxt)                 go to 20
        if (x .ge. xt(lxt))            go to 110
@@ -777,6 +794,12 @@ contains
     left = left - 1
     if (xt(left) .lt. xt(lxt))        return
                                       go to 111
+                                      return
+    ! -- reset ilo to 1 in case the parent routines are called multiple times in one program execution.
+    entry interv_reset
+    ilo = 1
+                                      return
+
   end subroutine interv
 
   ! ------------------------------------------------------------------------------------------------------------------------------ !
