@@ -62,7 +62,7 @@ $input_parameters
   CAP_strength = 0.01
     !! The CAP_strength $A$, in atomic units.
 
-  potential_file = "sampleData/CFp_pot_30.dat"
+  potential_file = "sampleData/V.dat"
     !! The location for the input internuclear potential in the format
     !!   R1 V1
     !!   R2 V2
