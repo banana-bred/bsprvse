@@ -38,7 +38,8 @@ $input_parameters
   order = 5
     !! The order of the B-splines
   legpoints = 10
-    !! The number of Gauss-Legendre quadrature points used to calculate integrals
+    !! The number of Gauss-Legendre quadrature points used to calculate integrals. The available number of points is given
+    !! in src/bsprvse__quadrature_weights.f : [ 6, 8, 10, 12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 64, 80 ]
 
   R_max = 10.0
     !! The largest value to consider for the internuclear potential

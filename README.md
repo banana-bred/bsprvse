@@ -81,7 +81,8 @@ np = 400
 order = 5
   !! The order of the B-splines
 legpoints = 10
-  !! The number of Gauss-Legendre quadrature points used to calculate integrals
+  !! The number of Gauss-Legendre quadrature points used to calculate integrals. The available number of points is given
+  !! in src/bsprvse__quadrature_weights.f : [ 6, 8, 10, 12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 64, 80 ]
 
 R_max = 10.0
   !! The largest value to consider for the internuclear potential
@@ -170,7 +171,8 @@ The input variables are as follows :
 | wf_nrg(:)        | complex(dp), intent(out)      | The energies of the wavefunctions (in atomic units)|
 | B_rot(:)         | complex(dp), intent(out)      | The rotational constant for each vibrational state in atomic units|
 | np               | integer, intent(in)           | The number of B-spline intervals|
-| legpoints        | integer, intent(in)           | The number of Gauss-Legendre quadrature points used to calculate integrals|
+| legpoints        | integer, intent(in)           | The number of Gauss-Legendre quadrature points used to calculate integrals.
+|                  |                               | Available legpoints : `6, 8, 10, 12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 64, 80` |
 | order            | integer, intent(in)           | The order of the B-splines|
 | CAP_exists       | logical, intent(in)           | Add an imaginary potential to the real internuclear potential ?|
 |                  |                               |   yes -> `.true.` |

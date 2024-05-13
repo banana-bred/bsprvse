@@ -48,12 +48,11 @@ contains
     !! of the internuclear distance $R$. A complex absorbing potential (CAP) can be added to calculate
     !! bound continuum states
 
-    use bsprvse__constants, only: zero, ci
-    use bsprvse__utilities, only: die
-    use bsprvse__globals,   only: R_mod, V_mod, x_grid, x_weights, x_sectors, B_overlap, H_matrix, basis, bound_energies, &
-                                  basis_dimension, legpoints, mass, np, nR_mod, order, V_min, x_begin, x_end
-
-
+    use bsprvse__globals,          only: R_mod, V_mod, x_grid, x_weights, x_sectors, B_overlap, H_matrix, basis, bound_energies, &
+                                         basis_dimension, legpoints, mass, np, nR_mod, order, V_min, x_begin, x_end
+    use bsprvse__constants,        only: zero, ci
+    use bsprvse__utilities,        only: die
+    use bsprvse__quadrature_weights, only: available_points
 
     real(wp), intent(in) :: R_in(:)
       !! the gid of the potential curve
@@ -72,7 +71,8 @@ contains
     integer, intent(in) :: np_in
       !! The number of B-spline intervals
     integer, intent(in) :: legpoints_in
-      !! The number of Gauss-Legendre quadrature points used to calculate integrals
+      !! The number of Gauss-Legendre quadrature points used to calculate integrals. The available number of points is given
+      !! in src/bsprvse__quadrature_weights.f : [ 6, 8, 10, 12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 64, 80 ]
     integer, intent(in) :: order_in
       !! The order of the B-splines
     real(wp), intent(in) :: mass_in
@@ -109,6 +109,10 @@ contains
     legpoints = legpoints_in
     order = order_in
     mass = mass_in
+
+    if(.not. any(legpoints .eq. available_points)) call die("Please choose a valid number of points for the Gauss-Legendre &
+      &quadrature :  6, 8, 10, 12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 64, 80.")
+
     R_mod  = R_in
     V_mod  = V_in
     V_min  = minval(V_mod, 1)

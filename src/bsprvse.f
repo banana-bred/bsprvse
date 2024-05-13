@@ -61,7 +61,8 @@ contains
     integer, intent(in) :: np
       !! The number of B-spline intervals
     integer, intent(in) :: legpoints
-      !! The number of Gauss-Legendre quadrature points used to calculate integrals
+      !! The number of Gauss-Legendre quadrature points used to calculate integrals. The available number of points is given
+      !! in src/bsprvse__quadrature_weights.f : [ 6, 8, 10, 12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 64, 80 ]
     integer, intent(in) :: order
       !! The order of the B-splines
 
@@ -109,7 +110,8 @@ contains
     integer, intent(in) :: np
       !! The number of B-spline intervals
     integer, intent(in) :: legpoints
-      !! The number of Gauss-Legendre quadrature points used to calculate integrals
+      !! The number of Gauss-Legendre quadrature points used to calculate integrals. The available number of points is given
+      !! in src/bsprvse__quadrature_weights.f : [ 6, 8, 10, 12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 64, 80 ]
     integer, intent(in) :: order
       !! The order of the B-splines
     logical, intent(in) :: CAP_exists

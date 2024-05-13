@@ -53,7 +53,8 @@ program main
   integer :: nwf
     !! The number of wavefunctions to calculate, from ν = 0 to ν = nwf - 1
   integer :: legpoints
-    !! The number of Gauss-Legendre quadrature points used to calculate integrals
+    !! The number of Gauss-Legendre quadrature points used to calculate integrals. The available number of points is given
+    !! in src/bsprvse__gaussian_weights.f : [ 6, 8, 10, 12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 64, 80 ]
   integer :: order
     !! The order of the B-splines
   integer :: nR_wf
