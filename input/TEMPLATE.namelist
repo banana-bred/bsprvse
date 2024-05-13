@@ -73,7 +73,7 @@ $input_parameters
     !!
     !! where R and V are both in atomic units
 
-  output_directory = "output"
+  output_directory = "output/sample"
     !! The directory in which to write the wavefunctions and energies.
     !! This directory must already exist
 

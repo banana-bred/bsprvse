@@ -1,5 +1,6 @@
 data
-output
+output/*
+!output/sample
 a.out
 bin
 lib
