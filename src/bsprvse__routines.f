@@ -739,7 +739,6 @@ contains
     integer :: istep
     integer :: middle
     integer :: ilo = 1
-    print*, "ilo", ilo
     ihi = ilo + 1
     if (ihi .lt. lxt)                 go to 20
        if (x .ge. xt(lxt))            go to 110
