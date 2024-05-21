@@ -9,6 +9,11 @@ module bsprvse__globals
 
   save
 
+  logical, public :: left_bc_zero
+    !! Is the left boundary condition zero ?
+  logical, public :: right_bc_zero
+    !! Is the right boundary condition zero ?
+
   integer, public :: basis_dimension
   integer, public :: nR_mod
   integer, public :: np
@@ -16,6 +21,8 @@ module bsprvse__globals
     !!The number of Gauss-Legendre quadrature points to calculate integrals
   integer, public :: order
   integer, public :: n_s_energies
+  integer, public :: ntotal
+    !! should be np + order
 
   real(wp), public :: mass
   real(wp), public :: x_begin

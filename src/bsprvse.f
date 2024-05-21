@@ -30,7 +30,7 @@ contains
 
   ! ------------------------------------------------------------------------------------------------------------------------------ !
   module subroutine solve_RVSE_without_CAP(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, B_rot &
-                                          , np, legpoints, order)
+                                          , np, legpoints, order, left_bc_zero, right_bc_zero)
     !! Wrapper routine to `solve_RVSE_with_CAP` for solving the RVSE without an aborbing potential.
     !! This just sets the `CAP_exists` variable to `.false.` without requiring the CAP variables as input
     !! from the user.
@@ -65,6 +65,10 @@ contains
       !! in src/bsprvse__quadrature_weights.f : [ 6, 8, 10, 12, 14, 16, 24, 28, 32, 36, 40, 44, 48, 64, 80 ]
     integer, intent(in) :: order
       !! The order of the B-splines
+    logical, intent(in) :: left_bc_zero
+      !! Is the left boundary condition zero ?
+    logical, intent(in) :: right_bc_zero
+      !! Is the right boundary condition zero ?
 
     logical, parameter :: CAP_exists    = .false.
     integer, parameter :: CAP_type      = 0
@@ -72,13 +76,14 @@ contains
     real(wp), parameter :: CAP_strength = zero
 
     call solve_RVSE_with_CAP(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, B_rot, np, legpoints, order &
-                            , CAP_exists, CAP_length, CAP_type, CAP_strength)
+                            , CAP_exists, CAP_length, CAP_type, CAP_strength, left_bc_zero, right_bc_zero)
 
   end subroutine solve_RVSE_without_CAP
 
   ! ------------------------------------------------------------------------------------------------------------------------------ !
   module subroutine solve_RVSE_with_CAP(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, B_rot  &
-                                       , np, legpoints, order, CAP_exists, CAP_length, CAP_type, CAP_strength )
+                                       , np, legpoints, order, CAP_exists, CAP_length, CAP_type, CAP_strength &
+                                       , left_bc_zero, right_bc_zero)
     !! Solve the (ro)vibrational time-independent Schrödinger equation with an added
     !! imaginary potential on the tail end.
 
@@ -132,6 +137,10 @@ contains
       !!   2 : quadratic
       !!   3 : cubic
       !!   4 : quartic
+    logical, intent(in) :: left_bc_zero
+      !! Is the left boundary condition zero ?
+    logical, intent(in) :: right_bc_zero
+      !! Is the right boundary condition zero ?
 
     integer :: i
     integer :: io
@@ -165,7 +174,7 @@ contains
 
     ! -- calculating bound states and resonances
     call bound_states_and_resonances(R_vals, V_vals2, nWF, nR_wf, R_wf, wf, wf_nrg, np, legpoints, order, massa, B_rot &
-                                    , CAP_exists, CAP_length, CAP_type, CAP_strength )
+                                    , CAP_exists, CAP_length, CAP_type, CAP_strength, left_bc_zero, right_bc_zero)
 
   end subroutine solve_RVSE_with_CAP
 

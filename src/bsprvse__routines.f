@@ -41,15 +41,17 @@ contains
 ! ================================================================================================================================ !
 
   ! ------------------------------------------------------------------------------------------------------------------------------ !
-  subroutine bound_states_and_resonances(R_in, V_in, nWF, nR_wf, R_wf, wf_g, E_for_K    &
-                                        , np_in, legpoints_in, order_in, mass_in, B_rot &
-                                        , CAP_exists, CAP_length, CAP_type, CAP_strength)
+  subroutine bound_states_and_resonances(R_in, V_in, nWF, nR_wf, R_wf, wf_g, E_for_K     &
+                                        , np_in, legpoints_in, order_in, mass_in, B_rot  &
+                                        , CAP_exists, CAP_length, CAP_type, CAP_strength &
+                                        , left_bc_zero_in, right_bc_zero_in)
     !! The driving routine to calculate wavefunctions given an internuclear potential as a function
     !! of the internuclear distance $R$. A complex absorbing potential (CAP) can be added to calculate
     !! bound continuum states
 
-    use bsprvse__globals,          only: R_mod, V_mod, x_grid, x_weights, x_sectors, B_overlap, H_matrix, basis, bound_energies, &
-                                         basis_dimension, legpoints, mass, np, nR_mod, order, V_min, x_begin, x_end
+    use bsprvse__globals,          only: R_mod, V_mod, x_grid, x_weights, x_sectors, B_overlap, H_matrix, basis, bound_energies &
+                                       , basis_dimension, legpoints, mass, np, nR_mod, order, V_min, x_begin, x_end, ntotal &
+                                       , left_bc_zero, right_bc_zero
     use bsprvse__constants,        only: zero, ci
     use bsprvse__utilities,        only: die
     use bsprvse__quadrature_weights, only: available_points
@@ -97,6 +99,10 @@ contains
     real(wp), intent(in) :: CAP_strength
       !! The CAP strength (parameters A1, A2, A3, A4, A5 in [1])
       !! This variable does nothing if CAP_exists is .false.
+    logical, intent(in) :: left_bc_zero_in
+      !! Set the left boundary condition to be zero ?
+    logical, intent(in) :: right_bc_zero_in
+      !! Set the right boundary condition to be zero ?
 
     integer :: i, k, l
     integer :: first_sector
@@ -104,6 +110,9 @@ contains
     ! -- check array sizes
     nR_mod = size(R_in, 1)
     if(size(V_in, 1) .ne. nR_mod) call die("The supplied R_in and V_in arrays are of different sizes")
+
+    left_bc_zero  = left_bc_zero_in
+    right_bc_zero = right_bc_zero_in
 
     np = np_in
     legpoints = legpoints_in
@@ -122,13 +131,18 @@ contains
 
     call GetAllGaussFactors
 
-    basis_dimension = np + order ! -- corresponds to no boundary conditions applied
+    ! -- assume no boundary conditions (BCs)
+    basis_dimension = np + order
+
+    ! ! -- remove the spline for the function and its derivative from each side that has a zero BC
+    ! if(left_bc_zero .eqv. .true.)  basis_dimension = basis_dimension - 2
+    ! if(right_bc_zero .eqv. .true.) basis_dimension = basis_dimension - 2
 
     allocate(x_grid(legpoints, np))
     allocate(x_weights(legpoints, np))
     allocate(x_sectors(np + 1))
     allocate(B_overlap(basis_dimension, basis_dimension))
-    allocate(H_matrix(np + order, np + order))
+    allocate(H_matrix(basis_dimension, basis_dimension))
 
     call grid_for_1D_B_splines(np,legpoints,x_begin,x_end,x_grid,x_weights,x_sectors)
 
@@ -187,7 +201,8 @@ contains
 
     use iso_fortran_env,    only: stdout => output_unit
     use bsprvse__constants, only: two
-    use bsprvse__globals,   only: psi, bound_energies, B_overlap, H_matrix, mass, np, order
+    use bsprvse__globals,   only: psi, bound_energies, B_overlap, H_matrix, mass, basis_dimension &
+                                , left_bc_zero, right_bc_zero
 
     integer :: N
     integer :: IL
@@ -195,6 +210,7 @@ contains
     integer :: M
     integer :: INFO
     integer :: k
+    integer :: i1, i2
 
     real(wp), allocatable :: RWORK(:)
 
@@ -204,10 +220,24 @@ contains
     complex(wp), allocatable :: DenomE(:)
     complex(wp), allocatable :: S_matrixc(:,:)
     complex(wp), allocatable :: tmpv(:)
+    complex(wp), allocatable :: H_matrix2(:,:)
 
-    N = np + order
+    ! N = np + order
+    N = basis_dimension
 
-    ! -- Applying boundary conditions (at the left side only)
+    ! -- Applying boundary conditions
+    i1 = 1
+    i2 = N
+    if(left_bc_zero) then
+      ! -- skip the first 2 splines
+      N = N - 2
+      i1 = i1 + 2
+    endif
+    if(right_bc_zero) then
+      ! -- skip the last 2 splines
+      N = N - 2
+      i2 = basis_dimension - 2
+    endif
 
     allocate(psi(N, N))
     allocate(VL(1, N))
@@ -219,15 +249,16 @@ contains
     allocate(Bound_energies(N))
 
     ! -- OP
-    H_matrix  = H_matrix / (two * mass)
-    S_matrixc = B_overlap
-    call zggev('N', 'V', N, H_matrix, N, S_matrixc, N, NomE, DenomE, VL, 1, psi, N, work2, 2 * N, rwork, info)
+    ! H_matrix  = H_matrix / (two * mass)
+    H_matrix2 = H_matrix(i1 : i2, i1 : i2) / (two * mass)
+    S_matrixc = B_overlap(i1 : i2, i1 : i2)
+    call zggev('N', 'V', N, H_matrix2, N, S_matrixc, N, NomE, DenomE, VL, 1, psi, N, work2, 2 * N, rwork, info)
 
     write(stdout, '("Diagonalization done !")')
 
     ! -- normalization
     do k = 1, N
-      tmpv = matmul(B_overlap(:,:), psi(:,k))
+      tmpv = matmul(B_overlap(i1 : i2,i1 : i2), psi(:,k))
       norma = sum(psi(:,k) * tmpv)
       ! if(k < 10) print *,norma
       psi(:,k) = psi(:,k) / sqrt(norma)
@@ -286,7 +317,8 @@ contains
   ! ------------------------------------------------------------------------------------------------------------------------------ !
   subroutine wf_R_calc(N_g, R_g, N_wf, wf_g, bv)
 
-    use bsprvse__globals,   only: psi, np, order, x_sectors, basis_dimension, mass
+    use bsprvse__globals,   only: psi, np, order, x_sectors, basis_dimension, mass &
+                                , left_bc_zero, right_bc_zero
     use bsprvse__constants, only: zero, ci
 
     integer,     intent(in)  :: N_g
@@ -295,17 +327,29 @@ contains
     complex(wp), intent(out) :: wf_g(N_g)
     complex(wp),    intent(out) :: bv
 
-    integer :: i
+    integer :: i, i1, i2, N
     ! real(wp) :: bcoef(basis_dimension)
     real(wp) :: wf_r(N_g)
     real(wp) :: wf_c(N_g)
     real(wp) :: bcoef_r(basis_dimension)
     real(wp) :: bcoef_c(basis_dimension)
 
-    bcoef_r(1) = zero
-    bcoef_c(1) = zero
-    bcoef_r(2:basis_dimension) = psi(1:basis_dimension - 1, N_wf) % re
-    bcoef_c(2:basis_dimension) = psi(1:basis_dimension - 1, N_wf) % im
+    bcoef_r = zero
+    bcoef_c = zero
+    N = basis_dimension
+    i1 = 1
+    i2 = N
+    if(left_bc_zero .eqv. .true.) then
+      i1 = i1 + 2
+      N  = N - 2
+    endif
+    if(right_bc_zero .eqv. .true.) then
+      i2 = i2 - 2
+      N  = N - 2
+    endif
+    ! N = basis_dimension - 1
+    bcoef_r(i1 : i2) = psi(1 : N, N_wf) % re
+    bcoef_c(i1 : i2) = psi(1 : N, N_wf) % im
 
     do i = 1, N_g
       wf_r(i) = B_Spline_to_R(order, np + 1, R_g(i), x_sectors, bcoef_r)

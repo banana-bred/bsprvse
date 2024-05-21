@@ -77,4 +77,9 @@ $input_parameters
     !! The directory in which to write the wavefunctions and energies.
     !! This directory must already exist
 
+  left_BC_zero  = .false.
+    !! Apply a zero boundary condition on the left ?
+  right_BC_zero = .false.
+    !! Apply a zero boundary condition on the right ?
+
 /

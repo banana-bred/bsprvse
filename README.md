@@ -120,6 +120,11 @@ output_directory = "output"
   !! The directory in which to write the wavefunctions and energies.
   !! This directory must already exist
 
+left_BC_zero  = .false.
+  !! Apply a zero boundary condition on the left ?
+right_BC_zero = .false.
+  !! Apply a zero boundary condition on the right ?
+
 
 /
 ```
@@ -140,16 +145,17 @@ The module `bsprvse` contains the public interface `solve_RVSE()` :
 
 which may be invoked as
 ```
-    solve_RVSE(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, &
-               B_rot, np, legpoints, order                                    &
+    solve_RVSE(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg &
+              , B_rot, np, legpoints, order, left_bc_zero, right_bc_zero     &
     )
 ```
 or
 
 ```
-    solve_RVSE(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, &
-               B_rot, np, legpoints, order,                                   &
-               CAP_exists, CAP_length, CAP_type, CAP_strength                 &
+    solve_RVSE(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg &
+              , B_rot, np, legpoints, order                                  &
+              , CAP_exists, CAP_length, CAP_type, CAP_strength               &
+              , left_bc_zero, right_bc_zero
     )
 ```
 
@@ -185,6 +191,8 @@ The input variables are as follows :
 |                  |                               |   2 : quadratic |
 |                  |                               |   3 : cubic |
 |                  |                               |   4 : quartic |
+| left_BC_zero     | integer, intent(in)           | Apply a zero condition on the left boundary ?|
+| right_BC_zero    | integer, intent(in)           | Apply a zero condition on the right boundary ?|
 
 </center>
 

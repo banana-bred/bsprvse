@@ -85,22 +85,27 @@ program main
   character(:), allocatable :: output_directory
     !! The directory in which to write the wavefunctions and energies. This directory
     !! should already exist
+  logical :: left_bc_zero
+    !! Is the left boundary condition zero ?
+  logical :: right_bc_zero
+    !! Is the right boundary condition zero ?
 
-  namelist / input_parameters /                 &
-                                j,              &
-                                np,             &
-                                nwf,            &
-                                legpoints,      &
-                                order,          &
-                                reduced_mass,   &
-                                R_max,          &
-                                nR_wf,          &
-                                CAP_exists,     &
-                                CAP_length,     &
-                                CAP_strength,   &
-                                CAP_type,       &
-                                potential_file, &
-                                output_directory
+  namelist / input_parameters / j                &
+                              , np               &
+                              , nwf              &
+                              , legpoints        &
+                              , order            &
+                              , reduced_mass     &
+                              , R_max            &
+                              , nR_wf            &
+                              , CAP_exists       &
+                              , CAP_length       &
+                              , CAP_strength     &
+                              , CAP_type         &
+                              , potential_file   &
+                              , output_directory &
+                              , left_bc_zero     &
+                              , right_bc_zero
 
   ! allocate(character(1000) :: potential_file)
   ! allocate(character(1000) :: output_directory)
@@ -140,7 +145,7 @@ program main
 
   ! -- call the procedure to solve the 1D RVSE with or without a CAP
   call solve_RVSE(R_vals, V_vals, j, reduced_mass, nwf, nR_wf, R_wf, wf, wf_nrg, B_rot, np, legpoints, order, &
-    CAP_exists, CAP_length, CAP_type, CAP_strength)
+    CAP_exists, CAP_length, CAP_type, CAP_strength, left_bc_zero, right_bc_zero)
 
   ! -- example of calling the procedure without supplying the CAP variables for a bound-state calculation
   ! call solve_RVSE(R_vals, V_vals, j, reduced_mass, R_max, nwf, nR_wf, wf, wf_nrg, np, legpoints, order)
