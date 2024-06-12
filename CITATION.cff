@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+title: BSPRVSE
+type: software
+authors:
+  - given-names: Josh
+    family-names: Forer
+    email: jbf2177@columbia.edu
+    affiliation: Columbia University
+    orcid: 'https://orcid.org/0000-0002-2753-6302'
+  - given-names: Viatcheslav
+    family-names: Kokoouline
+    orcid: 'https://orcid.org/0000-0002-9945-0858'
+    affiliation: University of Central Florida
+repository-code: 'https://github.com/banana-bred/bsprvse'
+abstract: >-
+  Use a basis of B-splines to solve the 1-D (ro)vibrational Schrödinger equation.
+  The potential can be purely real, or can have a purely imaginary potential added to the tail end, resulting in a complex absorbing potential (CAP).
+keywords:
+  - 'B-spline,'
+  - Schrödinger equation
+  - vibration
+  - rovibration
+  - CAP
+  - complex absorbing potential
+license: MIT
+commit: 83d55629e249c85d192b9989c5c829481557af25
+version: v1.0.0
+date-released: '2024-05-21'
