@@ -774,8 +774,8 @@ contains
 
   ! ------------------------------------------------------------------------------------------------------------------------------ !
   subroutine interv (xt, lxt, x, left, mflag)
-    real(wp), intent(in) :: xt(lxt)
     integer,  intent(in) :: lxt
+    real(wp), intent(in) :: xt(lxt)
     real(wp), intent(in) :: x
     integer,  intent(out) :: left
     integer,  intent(out) :: mflag
