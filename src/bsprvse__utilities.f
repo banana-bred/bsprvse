@@ -102,7 +102,7 @@ contains
     write(stderr,'("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")')
     write(stderr,*)
     if(.not.present(message)) error stop
-    write(stderr,'("STOP",X,"::",X,A)') message
+    write(stderr,'("STOP",1X,"::",1X,A)') message
     write(stderr,*)
     error stop
   end subroutine die_1
@@ -121,7 +121,7 @@ contains
     write(stderr,'("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")')
     write(stderr,'("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")')
     write(stderr,*)
-    write(stderr,'("STOP",X,"::",X,A,/,A)') message1, message2
+    write(stderr,'("STOP",1X,"::",1X,A,/,A)') message1, message2
     write(stderr,*)
     error stop
   end subroutine die_2
